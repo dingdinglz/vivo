@@ -38,7 +38,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [ ] 查询改写
 
-- [ ] 地理编码
+- [x] 地理编码
 
 ## 开始使用
 
@@ -270,6 +270,45 @@ func main() {
 		url, status, _ = app.DrawGetResult(task_id)
 	}
 	fmt.Println(url)
+}
+
+```
+
+### 地理编码
+
+#### POI搜索 - GeoPOISearch
+
+输入关键字，查询对应城市的POI接口，输出相关联的地理名称、类别、经度纬度、附近的酒店饭店商铺等信息。
+
+第一个参数是地点，第二个参数是城市名，第三个参数是当前显示的页数，第四个是可选参数，一页有多少个地点
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	_, total, _ := app.GeoPOISearch("星海广场", "大连市", 1, 10)
+	fmt.Println("共检索到", total, "个地点")
+	pages := int(total / 10)
+	if total%pages != 0 {
+		pages++
+	}
+	for i := 1; i <= pages; i++ {
+		poi, _, _ := app.GeoPOISearch("星海广场", "大连市", i, 10)
+		for _, item := range poi {
+			fmt.Println(item.Name, item.Province+item.City+item.District+item.Address, item.Location, item.Type)
+		}
+	}
 }
 
 ```

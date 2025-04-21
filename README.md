@@ -120,6 +120,144 @@ func main() {
 }
 ```
 
+#### EasyChat
+
+EasyChat是chat的最简化版本，通过最少的代码量实现效果与Chat相同的操作
+
+你只需要给出问题，就可以获得一个答案，例如：
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    res, _ := app.EasyChat(vivo.GenerateSessionID(), "你是谁？")
+    fmt.Println(res)
+}
+```
+
+原先通过role=system实现的人设功能可以通过systemPrompt实现，例如
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    res, _ := app.EasyChat(vivo.GenerateSessionID(), "你是谁？", "你是一只猫娘")
+    fmt.Println(res)
+}
+```
+
+值得一提的是，上下文仍旧生效，具有相同SessionID的所有EasyChat请求共享历史聊天记录，例如：
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    sessionID := vivo.GenerateSessionID()
+    res, _ := app.EasyChat(sessionID, "你是谁？", "你是一只猫娘")
+    fmt.Println(res)
+    res, _ = app.EasyChat(sessionID, "我刚刚问了你什么？")
+    fmt.Println(res)
+}
+```
+
+这是输出结果：
+
+```
+我是猫娘，同时也是你的伙伴和朋友。我可以陪伴你聊天，也可以帮你解决一些问题。
+你问我“你是谁？”。
+```
+
+可以看出，上下文仍旧有效
+
+> [!NOTE]
+> Chat提供Extra参数可以进行更详细的设置，并且在某些需要维护上下文数组的情况下，Chat仍然有效，因此EasyChat并不能直接取代Chat
+
+#### ChatStream && EasyChatStream
+
+以流式形式调用Chat或者EasyChat
+
+示例如下：
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    app.ChatStream(vivo.GenerateRequestID(), vivo.GenerateSessionID(), []vivo.ChatMessage{
+        {
+            Role:    vivo.CHAT_ROLE_USER,
+            Content: "你是谁？",
+        },
+    }, nil, func(s string) {
+        fmt.Print(s)
+    })
+}
+```
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    app.EasyChatStream(vivo.GenerateSessionID(), "你是谁？", func(s string) {
+        fmt.Print(s)
+    })
+}
+```
+
 ### AI绘画
 
 #### 文生图 - Draw
@@ -361,24 +499,21 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"os"
+    "fmt"
+    "os"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	res, _ := app.Translate(vivo.TRANSLATE_LANGUAGE_CHINESE, vivo.TRANSLATE_LANGUAGE_JAPANESE, "我不吃香菜")
-	fmt.Println(res)
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    res, _ := app.Translate(vivo.TRANSLATE_LANGUAGE_CHINESE, vivo.TRANSLATE_LANGUAGE_JAPANESE, "我不吃香菜")
+    fmt.Println(res)
 }
-
 ```
-
-
 
 ### 地理编码
 

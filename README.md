@@ -268,44 +268,6 @@ func main() {
 }
 ```
 
-### 地理编码
-
-#### POI搜索 - GeoPOISearch
-
-输入关键字，查询对应城市的POI接口，输出相关联的地理名称、类别、经度纬度、附近的酒店饭店商铺等信息。
-
-第一个参数是地点，第二个参数是城市名，第三个参数是当前显示的页数，第四个是可选参数，一页有多少个地点
-
-```go
-package main
-
-import (
-    "fmt"
-    "os"
-
-    "github.com/dingdinglz/vivo"
-)
-
-func main() {
-    app := vivo.NewVivoAIGC(vivo.Config{
-        AppID:  os.Getenv("APPID"),
-        AppKey: os.Getenv("APPKEY"),
-    })
-    _, total, _ := app.GeoPOISearch("星海广场", "大连市", 1, 10)
-    fmt.Println("共检索到", total, "个地点")
-    pages := int(total / 10)
-    if total%pages != 0 {
-        pages++
-    }
-    for i := 1; i <= pages; i++ {
-        poi, _, _ := app.GeoPOISearch("星海广场", "大连市", i, 10)
-        for _, item := range poi {
-            fmt.Println(item.Name, item.Province+item.City+item.District+item.Address, item.Location, item.Type)
-        }
-    }
-}
-```
-
 ### 通用ocr - OCR
 
 识别用户向服务请求的某张图中的所有文字，并返回文字在图片中的位置信息，方便用户进行文字排版的二次处理参考。
@@ -388,3 +350,41 @@ func main() {
 ```
 
 该模式下返回的是vivo.OcrAllData，具有两个参数，分别对应上面两种模式的返回参数
+
+### 地理编码
+
+#### POI搜索 - GeoPOISearch
+
+输入关键字，查询对应城市的POI接口，输出相关联的地理名称、类别、经度纬度、附近的酒店饭店商铺等信息。
+
+第一个参数是地点，第二个参数是城市名，第三个参数是当前显示的页数，第四个是可选参数，一页有多少个地点
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    _, total, _ := app.GeoPOISearch("星海广场", "大连市", 1, 10)
+    fmt.Println("共检索到", total, "个地点")
+    pages := int(total / 10)
+    if total%pages != 0 {
+        pages++
+    }
+    for i := 1; i <= pages; i++ {
+        poi, _, _ := app.GeoPOISearch("星海广场", "大连市", i, 10)
+        for _, item := range poi {
+            fmt.Println(item.Name, item.Province+item.City+item.District+item.Address, item.Location, item.Type)
+        }
+    }
+}
+```

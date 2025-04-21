@@ -32,7 +32,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 文本翻译
 
-- [ ] 文本向量
+- [x] 文本向量
 
 - [ ] 文本相似度
 
@@ -511,6 +511,36 @@ func main() {
         AppKey: os.Getenv("APPKEY"),
     })
     res, _ := app.Translate(vivo.TRANSLATE_LANGUAGE_CHINESE, vivo.TRANSLATE_LANGUAGE_JAPANESE, "我不吃香菜")
+    fmt.Println(res)
+}
+```
+
+### 文本向量 - TextVector
+
+将用户提供的文本信息表示成计算机可识别的实数向量，用数值向量来表示文本的语义。
+
+第一个参数是使用的模型，由vivo.VECTOR_MODEL_选择，第二个参数是文本列表，返回向量列表
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    res, _ := app.TextVector(vivo.VECTOR_MODEL_M3E, []string{
+        "原神",
+        "三国杀",
+        "火影忍者",
+    })
     fmt.Println(res)
 }
 ```

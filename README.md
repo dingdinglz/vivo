@@ -30,7 +30,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [ ] 声音复制
 
-- [ ] 文本翻译
+- [x] 文本翻译
 
 - [ ] 文本向量
 
@@ -350,6 +350,35 @@ func main() {
 ```
 
 该模式下返回的是vivo.OcrAllData，具有两个参数，分别对应上面两种模式的返回参数
+
+### 文本翻译 - Translate
+
+将一段源语言文本转换成目标语言文本，可根据语言参数的不同实现多国语言之间的互译。
+
+第一个参数是传入文本的语言，第二个参数是翻译到的文本的语言，这两个参数可以通过vivo.TRANSLATE_LANGUAGE_指定，第三个参数是传入的文本，返回翻译后的文本
+
+```go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, _ := app.Translate(vivo.TRANSLATE_LANGUAGE_CHINESE, vivo.TRANSLATE_LANGUAGE_JAPANESE, "我不吃香菜")
+	fmt.Println(res)
+}
+
+```
+
+
 
 ### 地理编码
 

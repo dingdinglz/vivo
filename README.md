@@ -14,7 +14,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] AI绘画
 
-- [ ] 通用OCR
+- [x] 通用OCR
 
 - [ ] 实时短语音识别
 
@@ -90,35 +90,34 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"os"
+    "fmt"
+    "os"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	session_id := vivo.GenerateSessionID()
-	messages := []vivo.ChatMessage{
-		{
-			Role:    vivo.CHAT_ROLE_USER,
-			Content: "介绍下你自己吧",
-		},
-	}
-	res, _ := app.Chat(vivo.GenerateRequestID(), session_id, messages, nil)
-	fmt.Println(res.Content)
-	messages = append(messages, res)
-	messages = append(messages, vivo.ChatMessage{
-		Role:    vivo.CHAT_ROLE_USER,
-		Content: "我刚刚问了你什么？",
-	})
-	res, _ = app.Chat(vivo.GenerateRequestID(), session_id, messages, nil)
-	fmt.Println(res.Content)
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    session_id := vivo.GenerateSessionID()
+    messages := []vivo.ChatMessage{
+        {
+            Role:    vivo.CHAT_ROLE_USER,
+            Content: "介绍下你自己吧",
+        },
+    }
+    res, _ := app.Chat(vivo.GenerateRequestID(), session_id, messages, nil)
+    fmt.Println(res.Content)
+    messages = append(messages, res)
+    messages = append(messages, vivo.ChatMessage{
+        Role:    vivo.CHAT_ROLE_USER,
+        Content: "我刚刚问了你什么？",
+    })
+    res, _ = app.Chat(vivo.GenerateRequestID(), session_id, messages, nil)
+    fmt.Println(res.Content)
 }
-
 ```
 
 ### AI绘画
@@ -133,27 +132,26 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"os"
-	"time"
+    "fmt"
+    "os"
+    "time"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	task_id, _ := app.Draw("画一只猫猫", vivo.DRAW_THEME_GENERAL)
-	url, status, _ := app.DrawGetResult(task_id)
-	for status == vivo.DRAW_TASK_STATUS_QUEUE || status == vivo.DRAW_TASK_STATUS_RUNNING {
-		time.Sleep(1 * time.Second)
-		url, status, _ = app.DrawGetResult(task_id)
-	}
-	fmt.Println(url)
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    task_id, _ := app.Draw("画一只猫猫", vivo.DRAW_THEME_GENERAL)
+    url, status, _ := app.DrawGetResult(task_id)
+    for status == vivo.DRAW_TASK_STATUS_QUEUE || status == vivo.DRAW_TASK_STATUS_RUNNING {
+        time.Sleep(1 * time.Second)
+        url, status, _ = app.DrawGetResult(task_id)
+    }
+    fmt.Println(url)
 }
-
 ```
 
 #### 图生图 - Draw2Draw
@@ -166,28 +164,27 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"os"
-	"time"
+    "fmt"
+    "os"
+    "time"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	pic, _ := os.ReadFile("test.png")
-	task_id, _ := app.Draw2Draw(pic, vivo.DRAW_THEME_GENERAL)
-	url, status, _ := app.DrawGetResult(task_id)
-	for status == vivo.DRAW_TASK_STATUS_QUEUE || status == vivo.DRAW_TASK_STATUS_RUNNING {
-		time.Sleep(1 * time.Second)
-		url, status, _ = app.DrawGetResult(task_id)
-	}
-	fmt.Println(url)
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    pic, _ := os.ReadFile("test.png")
+    task_id, _ := app.Draw2Draw(pic, vivo.DRAW_THEME_GENERAL)
+    url, status, _ := app.DrawGetResult(task_id)
+    for status == vivo.DRAW_TASK_STATUS_QUEUE || status == vivo.DRAW_TASK_STATUS_RUNNING {
+        time.Sleep(1 * time.Second)
+        url, status, _ = app.DrawGetResult(task_id)
+    }
+    fmt.Println(url)
 }
-
 ```
 
 #### 取消绘画任务 - DrawCancel
@@ -198,19 +195,18 @@ func main() {
 package main
 
 import (
-	"os"
+    "os"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	app.DrawCancel("task_id")
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    app.DrawCancel("task_id")
 }
-
 ```
 
 #### 获取风格列表 - DrawGetThemes
@@ -221,23 +217,22 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"os"
+    "fmt"
+    "os"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	themes, _ := app.DrawGetThemes(vivo.DRAW_TYPE_IMG2IMG)
-	for _, item := range themes {
-		fmt.Println(item.StyleName, item.StyleID)
-	}
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    themes, _ := app.DrawGetThemes(vivo.DRAW_TYPE_IMG2IMG)
+    for _, item := range themes {
+        fmt.Println(item.StyleName, item.StyleID)
+    }
 }
-
 ```
 
 #### 图片外拓 - DrawExtend
@@ -250,28 +245,27 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"os"
-	"time"
+    "fmt"
+    "os"
+    "time"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	pic, _ := os.ReadFile("test.png")
-	task_id, _ := app.DrawExtend(pic, "dd72470d24fd59bc9df42046c4b27bae", vivo.DRAW_EXTEND_MODE_MULTIPLE, vivo.DRAW_IMAGE_FORMAT_PNG)
-	url, status, _ := app.DrawGetResult(task_id)
-	for status == vivo.DRAW_TASK_STATUS_QUEUE || status == vivo.DRAW_TASK_STATUS_RUNNING {
-		time.Sleep(1 * time.Second)
-		url, status, _ = app.DrawGetResult(task_id)
-	}
-	fmt.Println(url)
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    pic, _ := os.ReadFile("test.png")
+    task_id, _ := app.DrawExtend(pic, "dd72470d24fd59bc9df42046c4b27bae", vivo.DRAW_EXTEND_MODE_MULTIPLE, vivo.DRAW_IMAGE_FORMAT_PNG)
+    url, status, _ := app.DrawGetResult(task_id)
+    for status == vivo.DRAW_TASK_STATUS_QUEUE || status == vivo.DRAW_TASK_STATUS_RUNNING {
+        time.Sleep(1 * time.Second)
+        url, status, _ = app.DrawGetResult(task_id)
+    }
+    fmt.Println(url)
 }
-
 ```
 
 ### 地理编码
@@ -286,29 +280,111 @@ func main() {
 package main
 
 import (
-	"fmt"
-	"os"
+    "fmt"
+    "os"
 
-	"github.com/dingdinglz/vivo"
+    "github.com/dingdinglz/vivo"
 )
 
 func main() {
-	app := vivo.NewVivoAIGC(vivo.Config{
-		AppID:  os.Getenv("APPID"),
-		AppKey: os.Getenv("APPKEY"),
-	})
-	_, total, _ := app.GeoPOISearch("星海广场", "大连市", 1, 10)
-	fmt.Println("共检索到", total, "个地点")
-	pages := int(total / 10)
-	if total%pages != 0 {
-		pages++
-	}
-	for i := 1; i <= pages; i++ {
-		poi, _, _ := app.GeoPOISearch("星海广场", "大连市", i, 10)
-		for _, item := range poi {
-			fmt.Println(item.Name, item.Province+item.City+item.District+item.Address, item.Location, item.Type)
-		}
-	}
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    _, total, _ := app.GeoPOISearch("星海广场", "大连市", 1, 10)
+    fmt.Println("共检索到", total, "个地点")
+    pages := int(total / 10)
+    if total%pages != 0 {
+        pages++
+    }
+    for i := 1; i <= pages; i++ {
+        poi, _, _ := app.GeoPOISearch("星海广场", "大连市", i, 10)
+        for _, item := range poi {
+            fmt.Println(item.Name, item.Province+item.City+item.District+item.Address, item.Location, item.Type)
+        }
+    }
 }
-
 ```
+
+### 通用ocr - OCR
+
+识别用户向服务请求的某张图中的所有文字，并返回文字在图片中的位置信息，方便用户进行文字排版的二次处理参考。
+
+第一个参数是图片，第二个参数是识别模式，通过vivo.OCR_MODE_选择，共支持三种模式，返回的格式均不相同，具体见示例
+
+#### 仅返回文字信息
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    pic, _ := os.ReadFile("test.png")
+    res, _ := app.OCR(pic, vivo.OCR_MODE_ONLY)
+    fmt.Println(res.(string))
+}
+```
+
+该模式下返回的类型是string
+
+#### 提供文字信息和坐标信息
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    pic, _ := os.ReadFile("test.png")
+    res, _ := app.OCR(pic, vivo.OCR_MODE_POS)
+    for _, item := range res.([]vivo.OcrPosData) {
+        fmt.Println(item.Words, item.Location)
+    }
+}
+```
+
+该模式下返回的是[]vivo.OcrPosData
+
+#### 混合提供
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/dingdinglz/vivo"
+)
+
+func main() {
+    app := vivo.NewVivoAIGC(vivo.Config{
+        AppID:  os.Getenv("APPID"),
+        AppKey: os.Getenv("APPKEY"),
+    })
+    pic, _ := os.ReadFile("test.png")
+    res, _ := app.OCR(pic, vivo.OCR_MODE_ALL)
+    fmt.Println(res.(vivo.OcrAllData))
+}
+```
+
+该模式下返回的是vivo.OcrAllData，具有两个参数，分别对应上面两种模式的返回参数

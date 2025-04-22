@@ -10,7 +10,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 蓝心大模型70B
 
-- [ ] 蓝心大模型多模态
+- [x] 蓝心大模型多模态
 
 - [x] AI绘画
 
@@ -256,6 +256,83 @@ func main() {
         fmt.Print(s)
     })
 }
+```
+
+### 蓝心大模型多模态
+
+#### VisionChat
+
+相比于Chat，VisionChat可以传入图片，调用参数也仅仅需要把ChatMessage改成VisionMessage即可，需要增加ContentType字段，可以通过vivo.CHAT_MESSAGE_选择，增加了model参数，可以通过vivo.VISION_CHAT_MODEL_选择
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	pic, _ := os.ReadFile("test.png")
+	res, _ := app.VisionChat(vivo.GenerateRequestID(), vivo.GenerateSessionID(), vivo.VISION_CHAT_MODEL_BLUELM_PRD, []vivo.VisionChatMessage{
+		{
+			Role:        vivo.CHAT_ROLE_USER,
+			Content:     vivo.GenerateVisionChatImage(pic),
+			ContentType: vivo.CHAT_MESSAGE_IMAGE,
+		},
+		{
+			Role:        vivo.CHAT_ROLE_USER,
+			Content:     "描述图片的内容",
+			ContentType: vivo.CHAT_MESSAGE_TEXT,
+		},
+	}, nil)
+	fmt.Println(res.Content)
+}
+
+```
+
+#### VisionChatStream
+
+同理，更改对应的参数即可，形式类似ChatStream
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	pic, _ := os.ReadFile("test.png")
+	app.VisionChatStream(vivo.GenerateRequestID(), vivo.GenerateSessionID(), vivo.VISION_CHAT_MODEL_BLUELM_PRD, []vivo.VisionChatMessage{
+		{
+			Role:        vivo.CHAT_ROLE_USER,
+			Content:     vivo.GenerateVisionChatImage(pic),
+			ContentType: vivo.CHAT_MESSAGE_IMAGE,
+		},
+		{
+			Role:        vivo.CHAT_ROLE_USER,
+			Content:     "描述图片的内容",
+			ContentType: vivo.CHAT_MESSAGE_TEXT,
+		},
+	}, nil, func(s string) {
+		fmt.Print(s)
+	})
+}
+
 ```
 
 ### AI绘画

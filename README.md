@@ -34,7 +34,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 文本向量
 
-- [ ] 文本相似度
+- [x] 文本相似度
 
 - [ ] 查询改写
 
@@ -575,6 +575,40 @@ func main() {
     })
     fmt.Println(res)
 }
+```
+
+### 文本相似度 - TextSimilarity
+
+将用户提供的文本信息从语义的角度来判断两者相似度。
+
+第一个参数是使用的模型，由vivo.TEXT_SIMILARITY_MODEL_选择，第二个参数是比对的文本，第三个参数是一系列要比对的句子。
+
+返回结果是对应sentences中每条文本与text文本的相似度
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, e := app.TextSimilarity(vivo.TEXT_SIMILARITY_MODEL_BGE_LARGE, "科技品牌发展", []string{
+		"自动追焦相关报表", "太古汇内云集逾180家知名品牌", "其中逾70个品牌为第一次进驻广州", "交通：商场M层连通地铁三号线石牌桥站；毗邻地铁一号线体育中心站。",
+	})
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+	fmt.Println(res)
+}
+
 ```
 
 ### 地理编码

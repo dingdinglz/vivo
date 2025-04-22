@@ -28,7 +28,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 音频生成
 
-- [ ] 声音复制
+- [x] 声音复制
 
 - [x] 文本翻译
 
@@ -594,6 +594,158 @@ func main() {
 		fmt.Println(e.Error())
 	}
 	os.WriteFile("test.wav", vivo.PcmToWav(res), os.ModePerm)
+}
+
+```
+
+### 声音复制
+
+该服务主要负责将用户上传的录音生成定制的音色（vcn），用户可根据生成的定制音色（vcn）结合短音频生成能力（TTS）合成音频
+
+#### 创建新音色 - VoiceCreate
+
+根据一个音频文件生成一个音色
+
+第一个参数是音频文件的地址，第二个参数是音频文件对应的文字
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	vcn, _, _ := app.VoiceCreate("test.wav", "你好，我喜欢玩原神。")
+	fmt.Println("vcn:", vcn)
+}
+
+```
+
+注意，返回的error!=nil时，不一定是服务调用出现了问题，可能是识别出的文字与传入的文字不一样，可以通过返回的第二个参数进行详细的判断
+
+#### 利用创建的新音色生成一段语音
+
+``` go
+package main
+
+import (
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	vcn, _, _ := app.VoiceCreate("test.wav", "你好，我喜欢玩原神。")
+	res, _ := app.TTS(vivo.TTS_MODE_REPLICA, vcn, "你听听这像我嘛？")
+	os.WriteFile("test.wav", vivo.PcmToWav(res), os.ModePerm)
+}
+
+```
+
+注意mode必须是vivo.TTS_MODE_REPLICA才能正确复刻！
+
+#### 查询一个音色 - VoiceGET
+
+传入的参数是vcn，返回VCNData
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	vcn, _ := app.VoiceGET("vcn")
+	fmt.Println(vcn.Vcn, vcn.CompleteTime)
+}
+
+```
+
+#### 获取已创建的音色列表 - VoiceGetList
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	vcnList, _ := app.VoiceGetList()
+	for _, item := range vcnList {
+		fmt.Println(item.Vcn)
+	}
+}
+
+```
+
+#### 删除一个音色 - VoiceDelete
+
+传入vcn
+
+``` go
+package main
+
+import (
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	app.VoiceDelete("vcn")
+}
+
+```
+
+#### 删除所有音色 - VoiceClean
+
+``` go
+package main
+
+import (
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	app.VoiceClean()
 }
 
 ```

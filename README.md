@@ -36,7 +36,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 文本相似度
 
-- [ ] 查询改写
+- [x] 查询改写
 
 - [x] 地理编码
 
@@ -603,6 +603,41 @@ func main() {
 	res, e := app.TextSimilarity(vivo.TEXT_SIMILARITY_MODEL_BGE_LARGE, "科技品牌发展", []string{
 		"自动追焦相关报表", "太古汇内云集逾180家知名品牌", "其中逾70个品牌为第一次进驻广州", "交通：商场M层连通地铁三号线石牌桥站；毗邻地铁一号线体育中心站。",
 	})
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+	fmt.Println(res)
+}
+
+```
+
+### 查询改写 - QueryRewrite
+
+查询改写是RAG/AI搜索链路中的重要环节，目的是使用模型对用户当前输入的问题（query）进行理解，并改写为适合搜索引擎检索的query。改写后的结果可根据情况融入历史对话的关键信息，可对复杂问题进行拆解，使得检索召回的知识更加全面、丰富，为最终生成回答提供有力支持。
+
+第一个参数是历史对话记录列表，一个问题，一个回答，最多支持6个，第二个参数是本次询问
+
+返回改写后的查询
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, e := app.QueryRewrite([]string{
+		"战狼2是谁主演的",
+		"《战狼2》是由吴京执导并主演的一部军事战争题材电影。影片中，吴京饰演了主角冷锋，他是一名退役的特种部队军人，在非洲执行任务时遭遇了一连串危机和战斗。因此，《战狼2》的主演是吴京。",
+	}, "第一部里有他吗")
 	if e != nil {
 		fmt.Println(e.Error())
 	}

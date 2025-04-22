@@ -26,7 +26,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [ ] 长语音转写
 
-- [ ] 音频生成
+- [x] 音频生成
 
 - [ ] 声音复制
 
@@ -488,6 +488,38 @@ func main() {
 ```
 
 该模式下返回的是vivo.OcrAllData，具有两个参数，分别对应上面两种模式的返回参数
+
+### 音频生成 - TTS
+
+自动文本转语音（TTS）功能，可将上传的单句文本转成播报音频
+
+第一个参数是生成模式，由vivo.TTS_MODE_选择，第二个参数是音色名称，可以通过声音复刻生成或选择已有音色，在https://aigc.vivo.com.cn/#/document/index?id=1735，查看音色大全，第三个参数是要生成的文本内容。
+
+返回的是pcm格式的数据，可以通过vivo.PcmToWav转成wav格式的数据，用法如下
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, e := app.TTS(vivo.TTS_MODE_SHORT, "xiaofu", "java是世界上最好的语言")
+	if e != nil {
+		fmt.Println(e.Error())
+	}
+	os.WriteFile("test.wav", vivo.PcmToWav(res), os.ModePerm)
+}
+
+```
 
 ### 文本翻译 - Translate
 

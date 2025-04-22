@@ -18,14 +18,18 @@ var (
 )
 
 type ttsRequest struct {
-	Aue      int    `json:"aue"`
-	Auf      string `json:"auf"`
-	Vcn      string `json:"vcn"`
-	Speed    int    `json:"speed,omitempty"`
-	Volume   int    `json:"volume,omitempty"`
+	Aue int    `json:"aue"`
+	Auf string `json:"auf"`
+	Vcn string `json:"vcn"`
+	TTSExtra
+	ReqID    int    `json:"reqId"`
 	Text     string `json:"text"`
 	Encoding string `json:"encoding"`
-	ReqID    int    `json:"reqId,omitempty"`
+}
+
+type TTSExtra struct {
+	Speed  int `json:"speed,omitempty"`
+	Volume int `json:"volume,omitempty"`
 }
 
 type ttsResponse struct {
@@ -37,7 +41,7 @@ type ttsResponse struct {
 	ErrorMsg  string `json:"error_msg"`
 }
 
-func (app *Vivo) TTS(mode string, vcn string, text string) ([]byte, error) {
+func (app *Vivo) TTS(mode string, vcn string, text string, extra ...TTSExtra) ([]byte, error) {
 	u := url.URL{Scheme: "wss", Host: "api-ai.vivo.com.cn", Path: "/tts"}
 	query := u.Query()
 	query.Set("engineid", mode)
@@ -86,13 +90,17 @@ func (app *Vivo) TTS(mode string, vcn string, text string) ([]byte, error) {
 			}
 		}
 	}()
-	sendData, _ := json.Marshal(ttsRequest{
+	sendRequest := ttsRequest{
 		Auf:      "audio/L16;rate=24000",
 		Vcn:      vcn,
 		Text:     base64encode([]byte(text)),
 		Encoding: "utf8",
 		ReqID:    513722013,
-	})
+	}
+	if len(extra) > 0 {
+		sendRequest.TTSExtra = extra[0]
+	}
+	sendData, _ := json.Marshal(sendRequest)
 	conn.WriteMessage(websocket.TextMessage, sendData)
 	wg.Wait()
 	if innerError != nil {

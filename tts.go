@@ -12,9 +12,10 @@ import (
 )
 
 var (
-	TTS_MODE_SHORT = "short_audio_synthesis_jovi"
-	TTS_MODE_LONG  = "long_audio_synthesis_screen"
-	TTS_MODE_HUMAN = "tts_humanoid_lam"
+	TTS_MODE_SHORT   = "short_audio_synthesis_jovi"
+	TTS_MODE_LONG    = "long_audio_synthesis_screen"
+	TTS_MODE_HUMAN   = "tts_humanoid_lam"
+	TTS_MODE_REPLICA = "tts_replica" // 音色复刻专用
 )
 
 type ttsRequest struct {

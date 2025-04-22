@@ -113,3 +113,7 @@ func PcmToWav(dst []byte) []byte {
 	resDst := headerDst + string(dst)
 	return []byte(resDst)
 }
+
+func GenerateVisionChatImage(file []byte) string {
+	return "data:image/JPEG;base64," + base64encode(file)
+}

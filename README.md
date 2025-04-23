@@ -24,7 +24,7 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 长语音听写
 
-- [ ] 长语音转写
+- [x] 长语音转写
 
 - [x] 音频生成
 
@@ -628,6 +628,75 @@ func main() {
 	})
 	res, _ := app.AsrLongVoiceRecognition("test.wav")
 	fmt.Println(res)
+}
+
+```
+
+### 长语音转写 - Transcription
+
+相较于长语音听写，长语音转写支持更长的音频长度，和更广的音频格式，他支持单次转写文件限制5个小时且小于500M，支持的音频格式有wav，pcm，m4a，mp3，acc，ogg，ogg_opus。
+
+进行长语音转写任务，我们需要经历以下几个步骤：
+
+1. 上传音频
+2. 开始转写语音
+3. 获取转写进度
+4. 获取转写结果
+
+例子写的非常清晰明了，看一遍例子即可明白Transcription的用法
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+	"time"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+    // 创建转写任务
+	trans := app.NewTranscription("output.mp3")
+	fmt.Println("开始上传...")
+    // 上传音频文件
+	e := trans.Upload()
+	if e != nil {
+		fmt.Println(e.Error())
+		return
+	}
+	fmt.Println("启动任务...")
+    // 开始转写语音
+	e = trans.Start()
+	if e != nil {
+		fmt.Println(e.Error())
+		return
+	}
+	process := 0
+	for process != 100 {
+		time.Sleep(1 * time.Second)
+        // 查询任务进度
+		process, e = trans.GetTaskInfo()
+		if e != nil {
+			fmt.Println(e.Error())
+			return
+		}
+		fmt.Println("当前任务进度：", process, "%")
+	}
+    // 获取转写结果
+	result, e := trans.GetResult()
+	if e != nil {
+		fmt.Println(e.Error())
+		return
+	}
+	for _, item := range result {
+		fmt.Println("开始秒数", item.Bg, "结束秒数", item.Ed, "内容：", item.Onebest)
+	}
 }
 
 ```

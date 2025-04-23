@@ -1,10 +1,13 @@
 package vivo
 
 import (
+	"bytes"
 	"crypto/hmac"
 	"crypto/rand"
 	"crypto/sha256"
 	"encoding/base64"
+	"encoding/binary"
+	"fmt"
 	"strconv"
 
 	"github.com/google/uuid"
@@ -116,4 +119,73 @@ func PcmToWav(dst []byte) []byte {
 
 func GenerateVisionChatImage(file []byte) string {
 	return "data:image/JPEG;base64," + base64encode(file)
+}
+
+func pcmIntToBytes(data []int, bitDepth int) ([]byte, error) {
+	if len(data) == 0 {
+		return []byte{}, nil
+	}
+
+	bytesPerSample := bitDepth / 8
+	if bitDepth%8 != 0 {
+		// 对于非标准的、非字节对齐的位深度
+		bytesPerSample = (bitDepth + 7) / 8
+	}
+	if bytesPerSample <= 0 {
+		return nil, fmt.Errorf("无效的位深度 %d", bitDepth)
+	}
+
+	buf := new(bytes.Buffer)
+	buf.Grow(len(data) * bytesPerSample) // 预分配容量
+
+	for _, sample := range data {
+		switch bitDepth {
+		case 8:
+			// 假设 8bit WAV 是 unsigned (0-255)
+			if sample < 0 || sample > 255 {
+				// Clamp or return error? Clamping might hide issues.
+				// return nil, fmt.Errorf("8-bit sample %d out of range [0, 255]", sample)
+				if sample < 0 {
+					sample = 0
+				}
+				if sample > 255 {
+					sample = 255
+				}
+			}
+			if err := buf.WriteByte(byte(sample)); err != nil {
+				return nil, err
+			}
+		case 16:
+			// int -> int16 -> uint16 (for bit pattern) -> LittleEndian bytes
+			if err := binary.Write(buf, binary.LittleEndian, int16(sample)); err != nil {
+				return nil, err
+			}
+		case 24:
+			// 手动写入 3 字节小端序
+			b := []byte{
+				byte(sample & 0xFF),
+				byte((sample >> 8) & 0xFF),
+				byte((sample >> 16) & 0xFF),
+			}
+			if _, err := buf.Write(b); err != nil {
+				return nil, err
+			}
+		case 32:
+			// int -> int32 -> uint32 (for bit pattern) -> LittleEndian bytes
+			// 假设是整数 PCM，非浮点
+			if err := binary.Write(buf, binary.LittleEndian, int32(sample)); err != nil {
+				return nil, err
+			}
+		default:
+			// 尝试通用小端写入，可能不适用于所有非标准格式
+			temp := make([]byte, bytesPerSample)
+			for j := 0; j < bytesPerSample; j++ {
+				temp[j] = byte((sample >> (j * 8)) & 0xFF)
+			}
+			if _, err := buf.Write(temp); err != nil {
+				return nil, err
+			}
+		}
+	}
+	return buf.Bytes(), nil
 }

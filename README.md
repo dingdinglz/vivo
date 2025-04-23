@@ -16,13 +16,13 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 通用OCR
 
-- [ ] 实时短语音识别
+- [x] 实时短语音识别
 
 - [ ] 方言自由说
 
 - [ ] 同声传译
 
-- [ ] 长语音听写
+- [x] 长语音听写
 
 - [ ] 长语音转写
 
@@ -565,6 +565,72 @@ func main() {
 ```
 
 该模式下返回的是vivo.OcrAllData，具有两个参数，分别对应上面两种模式的返回参数
+
+### 实时短语音识别 - AsrShortVoiceRecognition
+
+传入文件的地址，注意，文件应当是wav格式，音频格式为16k/16b单声道
+
+给出mp3文件转成该格式的ffmpeg的转换命令
+
+``` bash
+ffmpeg -i input.mp3 -ar 16000 -ac 1 -acodec pcm_s16le output.wav
+```
+
+返回识别的结果，短语音识别只能识别出一句话，如果一段话的识别，请转向长语音听写或转写
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, _ := app.AsrShortVoiceRecognition("test.wav")
+	fmt.Println(res)
+}
+
+```
+
+### 长语音听写 - AsrLongVoiceRecognition
+
+传入文件的地址，注意，文件应当是wav格式，音频格式为16k/16b单声道
+
+给出mp3文件转成该格式的ffmpeg的转换命令
+
+``` bash
+ffmpeg -i input.mp3 -ar 16000 -ac 1 -acodec pcm_s16le output.wav
+```
+
+返回识别的结果
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, _ := app.AsrLongVoiceRecognition("test.wav")
+	fmt.Println(res)
+}
+
+```
 
 ### 音频生成 - TTS
 

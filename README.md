@@ -18,9 +18,9 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 - [x] 实时短语音识别
 
-- [ ] 方言自由说
+- [x] 方言自由说
 
-- [ ] 同声传译
+- [x] 同声传译
 
 - [x] 长语音听写
 
@@ -598,6 +598,43 @@ func main() {
 }
 
 ```
+
+### 方言自由说 - DialectRecognition
+
+传入文件的地址，注意，文件应当是wav格式，音频格式为16k/16b单声道
+
+给出mp3文件转成该格式的ffmpeg的转换命令
+
+``` bash
+ffmpeg -i input.mp3 -ar 16000 -ac 1 -acodec pcm_s16le output.wav
+```
+
+返回识别的结果
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, _ := app.DialectRecognition("test.wav")
+	fmt.Println(res)
+}
+
+```
+
+### 同声音传译
+
+请使用长语音听写 + 翻译 + 音频生成替代，如果有一定需要流式使用该功能的需要，请发issue。
 
 ### 长语音听写 - AsrLongVoiceRecognition
 

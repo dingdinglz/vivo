@@ -8,6 +8,8 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 ## 实现能力列表
 
+2025年赛事方提供的全部ai能力已经全部封装完成，使用过程中遇到问题请发issue或者私聊。
+
 - [x] 蓝心大模型70B
 
 - [x] 蓝心大模型多模态

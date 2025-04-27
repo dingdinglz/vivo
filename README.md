@@ -10,6 +10,8 @@ ai能力文档：https://aigc.vivo.com.cn/#/document/index
 
 2025年赛事方提供的全部ai能力已经全部封装完成，使用过程中遇到问题请发issue或者私聊。
 
+如果本包对你有帮助，给个star吧～
+
 - [x] 蓝心大模型70B
 
 - [x] 蓝心大模型多模态
@@ -52,6 +54,11 @@ go get github.com/dingdinglz/vivo
 
 > [!WARNING]
 > 下述示例为了保证代码尽可能少，均未做错误处理，实际使用中应进行错误处理！
+
+
+> [!IMPORTANT]
+> 示例中使用的os.Getenv是获取环境变量的意思，为了保证key和id的隐私性，使用时传入id和key的字符串即可，不需要一定要仿照我的os.Getenv
+
 
 ### 蓝心大模型70B
 

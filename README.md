@@ -359,6 +359,8 @@ func main() {
 }
 ```
 
+需要同时用到多个mcp，再加上要用到自己的tool时，只需要维护一个tools数组即可，通过append进行拼接即可。
+
 ### 蓝心大模型多模态
 
 #### VisionChat

@@ -269,6 +269,96 @@ func main() {
 }
 ```
 
+#### Function Calling - ChatWithTools
+
+Function Calling让llm可以使用你定义的工具函数，比如你可以通过添加一个查询天气状况的函数让大模型可以调用函数。
+
+详细的介绍可以看：[大模型Function Calling终极指南 ｜ golang如何调用Function Calling](https://www.bilibili.com/video/BV14wNSeWEGR)
+
+ChatWithTools允许蓝心大模型使用我们的自定义function，第一个参数是sessionID，可以通过GenerateSessionID生成，第二个和第三个参数是messages和extra，同Chat部分，第四个参数是tools，是我们的自定义函数，一个ChatTool具有四个参数，FuncName是函数名，类似于开发中自定义函数的函数名，Description是对函数功能的描述，Parameters是一个数组，定义传入函数的参数（Name是变量名，Description是对该变量的描述，Type是变量类型，例如string等等，Enum用于枚举变量，可以限制llm传入的参数的范围，不用可以不填，Required则是是否必须使用该参数。）Func则是函数的实现，你需要定义一个形如`func(m map[string]interface{}) (string, error)`的函数，然后完成函数内容，通过m["传入变量名（对应Parameters中定义的）"]可以取出llm传入的参数，然后返回函数调用的结果（用自然语言描述即可）。
+
+使用方式请看示例：
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	res, _ := app.ChatWithTools(vivo.GenerateSessionID(), []vivo.ChatMessage{
+		{
+			Role:    vivo.CHAT_ROLE_USER,
+			Content: "合肥现在天气怎么样？",
+		},
+	}, nil, []vivo.ChatTool{
+		{
+			FuncName:    "get_current_weather",
+			Description: "获取一个城市的天气状况",
+			Parameters: []vivo.ChatToolParameter{
+				{
+					Name:        "city",
+					Description: "城市名",
+					Type:        "string",
+					Required:    true,
+				},
+			},
+			Func: func(m map[string]interface{}) (string, error) {
+				city := m["city"].(string)
+				fmt.Println("城市", city, "被查询了")
+				// 这里是模拟，没真进行天气查询，实际使用可以调用查询api
+				return "晴,26度", nil
+			},
+		},
+	})
+	fmt.Println(res)
+}
+```
+
+运行后，可以看到，llm调用了我们定义的get_current_weather函数，这样我们就可以为大模型添加很多实用的功能，让我们与大模型交互更加方便
+
+#### 使用mcp
+
+现在mcp大火，mcp其实就是tool的合集，为llm提供一系列的三方能力，下面的例子是接入高德mcp，只需要通过McpToTools把mcp生成tools，再传入ChatWithTools即可，本包帮助完成了mcp的调用过程
+
+通过下面几行代码，即可轻松地将mcp接入我们的蓝心大模型中
+
+``` go
+package main
+
+import (
+	"fmt"
+	"os"
+
+	"github.com/dingdinglz/vivo"
+)
+
+func main() {
+	app := vivo.NewVivoAIGC(vivo.Config{
+		AppID:  os.Getenv("APPID"),
+		AppKey: os.Getenv("APPKEY"),
+	})
+	tools, _ := vivo.McpToTools("npx", []string{
+		"AMAP_MAPS_API_KEY=apikey",
+	}, "-y", "@amap/amap-maps-mcp-server")
+	res, _ := app.ChatWithTools(vivo.GenerateSessionID(), []vivo.ChatMessage{
+		{
+			Role:    vivo.CHAT_ROLE_USER,
+			Content: "大连市有哪些好玩的景点",
+		},
+	}, nil, tools)
+	fmt.Println(res)
+}
+```
+
 ### 蓝心大模型多模态
 
 #### VisionChat

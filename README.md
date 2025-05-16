@@ -845,7 +845,7 @@ func main() {
 
 自动文本转语音（TTS）功能，可将上传的单句文本转成播报音频
 
-第一个参数是生成模式，由vivo.TTS_MODE_选择，第二个参数是音色名称，可以通过声音复刻生成或选择已有音色，在https://aigc.vivo.com.cn/#/document/index?id=1735，查看音色大全，第三个参数是要生成的文本内容。
+第一个参数是生成模式，由vivo.TTS_MODE_选择，第二个参数是音色名称，可以通过声音复刻生成或选择已有音色，在https://aigc.vivo.com.cn/#/document/index?id=1735 ，查看音色大全，第三个参数是要生成的文本内容。
 
 返回的是pcm格式的数据，可以通过vivo.PcmToWav转成wav格式的数据，用法如下
 
